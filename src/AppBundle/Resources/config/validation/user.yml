@@ -1,0 +1,16 @@
+AppBundle\Entity\User:
+    properties:
+        username:
+            - Regex:
+                pattern: '/\w/'
+                match:   true
+                message: Votre nom d'utilisateur ne peut contenir que des chiffres/lettres
+            - Length:
+                min: 3
+                max: 15
+                minMessage: Votre nom d'utilisateur doit contenir au moins {{ limit }} caractères
+                maxMessage: Votre nom d'utilisateur doit contenir {{ limit }} caractères maximum
+        plainPassword:
+            - Length:
+                min: 4
+                minMessage: Votre mot de passe doit contenir au moins {{ limit }} caractères

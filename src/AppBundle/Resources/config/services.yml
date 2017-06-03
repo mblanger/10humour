@@ -1,0 +1,4 @@
+services:
+    app.formerrorsformatter:
+        class: AppBundle\FormTools\FormErrorsFormatter
+        arguments:
