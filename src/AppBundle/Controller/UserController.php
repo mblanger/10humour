@@ -8,6 +8,9 @@ use AppBundle\FormTools\FormErrorsFormatter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\EncoderFactory;
+use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class UserController extends Controller
 {
@@ -16,17 +19,17 @@ class UserController extends Controller
         $form = $this->createForm(RegisterType::class);
         $form->handleRequest($request);
 
-        $this->generateSalt();
-
         if($form->isSubmitted() && $form->isValid())
         {
             /** @var User $user */
             $user = $form->getData();
-            /** @var EncoderFactory $encoder */
-            $encoder = $this->get('security.encoder_factory');
-            $encoded = $encoder->getEncoder($user);
-//            $encoded->encodePassword($user->getPlainPassword(), )
+
+            /** @var UserPasswordEncoder $encoder */
+            $encoder = $this->get('security.password_encoder');
+            $encoded = $encoder->encodePassword($user, $user->getPlainPassword());
+            $user->setPlainPassword($encoded);
         }
+
         /** @var FormErrorsFormatter $formErrorsFormatter */
         $formErrorsFormatter = $this->get('app.formerrorsformatter');
         $errors = $formErrorsFormatter->getErrorMessages($form);
@@ -37,19 +40,15 @@ class UserController extends Controller
         ));
     }
 
-    private function generateSalt()
+    public function loginAction(Request $request, AuthenticationUtils $authenticationUtils)
     {
-        $salt = '';
+        $error = $authenticationUtils->getLastAuthenticationError();
 
-        for($i=0;$i<32;$i++){
-            $salt .= chr(rand(0,256));
-        }
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $salt;
-    }
+        $this->addFlash('error', $error);
 
-    public function loginAction()
-    {
         return $this->render('AppBundle:User:login.html.twig', array(
             // ...
         ));

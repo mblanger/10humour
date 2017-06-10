@@ -6,7 +6,8 @@ security:
     providers:
         in_memory:
             memory: ~
-
+        users:
+            entity: { class: AppBundle\Entity\User, property: username }
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
@@ -14,7 +15,22 @@ security:
             security: false
 
         main:
+            pattern: ^/
             anonymous: ~
+            provider: users
+            form-login:
+                login_path: /login
+                check_path: /login
+                failure_path: /
+                #post_only:      true
+                #remember_me: true
+            logout:
+                path: logout
+                target: /
+            remember_me:
+                secret: "%secret%"
+                lifetime: 604800 # 1 semaine
+                path:     /
             # activate different ways to authenticate
 
             # http://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
@@ -24,4 +40,4 @@ security:
             #form_login: ~
 
     encoders:
-        Symfony\Components\Security\Core\User\User: sha512
+        AppBundle\Entity\User: bcrypt

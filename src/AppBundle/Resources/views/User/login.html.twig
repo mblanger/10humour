@@ -1,7 +1,31 @@
-{% extends "::base.html.twig" %}
+{% extends "AppBundle::layout.html.twig" %}
 
-{% block title %}AppBundle:User:login{% endblock %}
+{% block title %}AppBundle:User:register{% endblock %}
 
 {% block body %}
-<h1>Welcome to the User:login page</h1>
+    <div class="root">
+
+        <div class="row">
+            <div class="col s8 push-l2">
+
+                {% if error %}
+                    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+
+                <form action="{{ path('login') }}" method="post">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="_username" value="{{ last_username }}" />
+
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="_password" />
+
+                    <button type="submit">login</button>
+                </form>
+
+
+            </div>
+        </div>
+
+    </div>
+
 {% endblock %}

@@ -6,6 +6,7 @@ imports:
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    database_path: "%kernel.root_dir%/db/db_%kernel.environment%.db3"
     locale: fr
 
 framework:
@@ -63,7 +64,7 @@ doctrine:
         mappings:
             AppBundle:
                 type: yml
-                dir: Resources/config/validation
+                dir: Resources/config/doctrine
 
 # Swiftmailer Configuration
 swiftmailer:
