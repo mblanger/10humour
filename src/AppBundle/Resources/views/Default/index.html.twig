@@ -3,5 +3,57 @@
 {% block title %}AppBundle:Default:index{% endblock %}
 
 {% block body %}
-<h1>Welcome to the Default:index page</h1>
+    <div class="row">
+        <div class="col s8 offset-s2">
+
+            {% if app.user %}
+
+                <h2>Proposer une image</h2>
+                {{ form_start(form) }}
+                    <div class="row">
+                        <div class="input-field col s12">
+                            {{ form_widget(form.title) }}
+                            {{ form_label(form.title, 'Titre') }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="file-field input-field">
+                            <div class="btn">
+                                <span>Image</span>
+                                {{ form_widget(form.image.file) }}
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text" />
+                            </div>
+                        </div>
+                    </div>
+                    <button class="waves-effect waves-light btn light-blue darken-2" type="submit">Envoyer</button>
+                    {{ form_widget(form._token) }}
+                </form>
+            {% endif %}
+            <br>
+            <br>
+            <br>
+            <br>
+            <div class="row">
+                {% for post in posts %}
+                    <div class="col s6">
+                        <div class="card">
+                            <div class="card-image">
+                                <img src="{{ asset(post.image.uploadDir~"/"~post.image.url) }}">
+                                <span class="card-title post-title">{{ post.title }}</span>
+                            </div>
+                            <div class="card-content">
+                                <p>Posté par {{ post.user.username }} le {{ post.datePost|date('d/m/Y à H') }} heures</p>
+                            </div>
+                            <div class="card-action">
+                                <a href="#">This is a link</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
 {% endblock %}

@@ -21,12 +21,18 @@
             <li><a href="#">Aléatoire</a></li>
             <li><a href="#">Top</a></li>
             <li><a href="#">Soumettre</a></li>
-            <li><a href="#">Connexion</a></li>
-            <li><a href="#">Connexion</a></li>
+            {% if app.user %}
+                <li><a href="{{ path('logout') }}">Déconnexion</a></li>
+            {% else %}
+                <li><a href="{{ path('register') }}">Inscription</a></li>
+                <li><a href="{{ path('login') }}">Connexion</a></li>
+            {% endif %}
         </ul>
     </div>
 </nav>
-{% block body %}{% endblock %}
+<div class="root">
+    {% block body %}{% endblock %}
+</div>
 <script src="{{ asset("js/jquery.min.js") }}"></script>
 <script src="{{ asset("js/materialize.min.js") }}"></script>
 {% block javascripts %}{% endblock %}

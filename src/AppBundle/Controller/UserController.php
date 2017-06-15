@@ -16,18 +16,25 @@ class UserController extends Controller
 {
     public function registerAction(Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
         $form = $this->createForm(RegisterType::class);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             /** @var User $user */
             $user = $form->getData();
 
             /** @var UserPasswordEncoder $encoder */
             $encoder = $this->get('security.password_encoder');
             $encoded = $encoder->encodePassword($user, $user->getPlainPassword());
-            $user->setPlainPassword($encoded);
+            $user->setPassword($encoded);
+            $user->setPlainPassword('');
+            $user->setLastLogin(new \DateTime('now'));
+
+            $em->persist($user);
+            $em->flush();
+            $this->addFlash('notice', 'Inscription terminée, vous pouvez vous connecter');
+            return $this->redirectToRoute('login');
         }
 
         /** @var FormErrorsFormatter $formErrorsFormatter */
@@ -40,8 +47,9 @@ class UserController extends Controller
         ));
     }
 
-    public function loginAction(Request $request, AuthenticationUtils $authenticationUtils)
+    public function loginAction(Request $request)
     {
+        $authenticationUtils = $this->get('security.authentication_utils');
         $error = $authenticationUtils->getLastAuthenticationError();
 
         // last username entered by the user
@@ -50,7 +58,8 @@ class UserController extends Controller
         $this->addFlash('error', $error);
 
         return $this->render('AppBundle:User:login.html.twig', array(
-            // ...
+            'last_username' => $lastUsername,
+            'error' => $error,
         ));
     }
 

@@ -6,6 +6,7 @@
 .input-field input:focus + label {
     color: #0288d1 !important;
 }
+
 /* label underline focus color */
 .row .input-field input:focus {
     border-bottom: 1px solid #0288d1 !important;
@@ -14,4 +15,17 @@
 
 .material-icons.active {
     color: #0288d1 !important;
+}
+
+.nav-wrapper {
+    padding-left: 10px;
+}
+
+.root {
+    padding-top: 20px;
+}
+
+.post-title {
+    text-shadow: 0 0 2px #6b6b6b,
+    0 0 4px #6b6b6b;
 }
