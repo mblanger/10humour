@@ -29,3 +29,36 @@
     text-shadow: 0 0 2px #6b6b6b,
     0 0 4px #6b6b6b;
 }
+
+.hidden{
+    display: none;
+}
+
+.voteup, .votedown{
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.voteup .vote, .votedown .vote{
+    margin-right: 5px !important;
+}
+
+.voteup i{
+     color: #00C853;
+}
+
+.scoreup{
+    position: relative;
+    top: -6px;
+    color: #00C853;
+}
+
+.votedown i{
+     color: #ce5e54;
+}
+
+.scoredown{
+    position: relative;
+    top: -6px;
+    color: #ce5e54;
+}

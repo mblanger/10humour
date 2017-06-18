@@ -1,6 +1,8 @@
 <?php
 
 namespace AppBundle\Repository;
+use AppBundle\Entity\Post;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * VoteRepository
@@ -10,4 +12,24 @@ namespace AppBundle\Repository;
  */
 class VoteRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function countVotesByPost(Post $post, $up = true){
+        return $this->createQueryBuilder('v')
+                    ->select('COUNT(v.id)')
+                    ->where('v.post = :post')
+                    ->andWhere('v.up = :up')
+                    ->setParameter('post', $post)
+                    ->setParameter('up', $up)
+                    ->getQuery()->getSingleScalarResult();
+    }
+
+    public function removeVotesByUserAndPost(UserInterface $user, Post $post){
+        return 1 ==
+        $this->createQueryBuilder('v')
+             ->delete()
+             ->where('v.user = :user')
+             ->andWhere('v.post = :post')
+             ->setParameter('user', $user)
+             ->setParameter('post', $post)
+             ->getQuery()->getSingleScalarResult();
+    }
 }

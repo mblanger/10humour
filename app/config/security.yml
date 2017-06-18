@@ -14,9 +14,16 @@ security:
 #            pattern: ^/(_(profiler|wdt)|css|images|js)/
 #            security: false
 
+        api:
+            pattern: ^/api
+            anonymous: ~
+            http_basic: ~
+            provider: users
+
         main:
             pattern: ^/
             anonymous: ~
+            http_basic: ~
             provider: users
             form-login:
                 login_path: /login
@@ -33,11 +40,8 @@ security:
                 path:     /
             # activate different ways to authenticate
 
-            # http://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
-            #http_basic: ~
-
-            # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
-            #form_login: ~
+    access_control:
+        - { path: ^/api, roles: ROLE_USER }
 
     encoders:
         AppBundle\Entity\User: bcrypt

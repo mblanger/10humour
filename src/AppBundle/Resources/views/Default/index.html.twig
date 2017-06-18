@@ -6,6 +6,14 @@
     <div class="row">
         <div class="col s8 offset-s2">
 
+            {% if app.session.flashbag.has('notice') %}
+                <div class="card-panel light-green lighten-3">{{ app.session.flashbag.get('notice')[0] }}</div>
+            {% endif %}
+
+            {% if app.session.flashbag.has('error') %}
+                <div class="card-panel red lighten-1">{{ app.session.flashbag.get('error')[0] }}</div>
+            {% endif %}
+
             {% if app.user %}
 
                 <h2>Proposer une image</h2>
@@ -31,9 +39,10 @@
                     {{ form_widget(form._token) }}
                 </form>
             {% endif %}
-            <br>
-            <br>
-            <br>
+            <div class="hidden">
+                {{ form_start(voteForm, {'attr': {'data-role': 'voteform'}}) }}
+                {{ form_end(voteForm) }}
+            </div>
             <br>
             <div class="row">
                 {% for post in posts %}
@@ -47,7 +56,17 @@
                                 <p>Posté par {{ post.user.username }} le {{ post.datePost|date('d/m/Y à H') }} heures</p>
                             </div>
                             <div class="card-action">
-                                <a href="#">This is a link</a>
+                                <a href="#" class="align-icon">0 commentaires</a>
+                                <div class="right">
+                                    <div class="voteup">
+                                        <a href="javascript:;" data-role="voteup" data-id="{{ post.id }}" class="vote"><i class="material-icons">thumb_up</i></a>
+                                        <span class="scoreup">{{ post.upvotes }}</span>
+                                    </div>
+                                    <div class="votedown">
+                                        <a href="javascript:;" data-role="votedown" data-id="{{ post.id }}" class="vote"><i class="material-icons">thumb_down</i></a>
+                                        <span class="scoredown">{{ post.downvotes }}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -56,4 +75,7 @@
         </div>
 
     </div>
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset("js/vote.js") }}"></script>
 {% endblock %}
