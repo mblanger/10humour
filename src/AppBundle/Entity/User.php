@@ -177,4 +177,3 @@ class User implements UserInterface
         $this->setPlainPassword(null);
     }
 }
-

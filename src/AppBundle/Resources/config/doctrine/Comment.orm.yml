@@ -1,7 +1,7 @@
-AppBundle\Entity\Post:
+AppBundle\Entity\Comment:
     type: entity
     table: null
-    repositoryClass: AppBundle\Repository\PostRepository
+    repositoryClass: AppBundle\Repository\CommentRepository
     id:
         id:
             type: integer
@@ -9,20 +9,15 @@ AppBundle\Entity\Post:
             generator:
                 strategy: AUTO
     fields:
-        title:
+        message:
             type: string
-            length: '30'
+            length: '140'
         datePost:
             type: datetimetz
-    oneToOne:
-        image:
-            targetEntity: Image
-            cascade: ["persist", "merge"]
     manyToOne:
         user:
             targetEntity: User
-    oneToMany:
-        comments:
-            targetEntity: Comment
-            mappedBy: post
+        post:
+            targetEntity: Post
+            inversedBy: comments
     lifecycleCallbacks: {  }

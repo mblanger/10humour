@@ -134,4 +134,3 @@ class Image
         return __DIR__ . '/../../../web/' . $this->getUploadDir();
     }
 }
-
