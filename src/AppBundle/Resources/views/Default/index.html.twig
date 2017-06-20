@@ -56,7 +56,7 @@
                                 <p>Posté par {{ post.user.username }} le {{ post.datePost|date('d/m/Y à H') }} heures</p>
                             </div>
                             <div class="card-action">
-                                <a href="#" class="align-icon">0 commentaires</a>
+                                <a href="{{ path('comment', {'post': post.id}) }}" class="align-icon">{{ post.comments|length }} commentaires</a>
                                 <div class="right">
                                     <div class="voteup">
                                         <a href="javascript:;" data-role="voteup" data-id="{{ post.id }}" class="vote"><i class="material-icons">thumb_up</i></a>

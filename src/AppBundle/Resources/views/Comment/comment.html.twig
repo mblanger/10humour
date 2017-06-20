@@ -17,7 +17,19 @@
                     <h3>Commentaires</h3>
 
                     <div class="comments">
-                        hello
+                        {{ form_start(form) }}
+                            {{ form_label(form.message, 'Poster un commentaire') }}
+                            {{ form_widget(form.message, {'attr': {'placeholder': 'Waouw ... !'}}) }}
+                            <button class="btn" type="submit">Envoyer</button>
+                        {{ form_end(form) }}
+
+                        <br />
+                        {% for comment in post.comments %}
+                        {% endfor %}
+
+                        {% if post.comments|length == 0 %}
+                            <div class="card-panel blue lighten-4">Il n'y à pas de commentaire, soyez le premier à poster le votre !</div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
