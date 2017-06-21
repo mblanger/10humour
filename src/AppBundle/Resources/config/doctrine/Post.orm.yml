@@ -25,4 +25,5 @@ AppBundle\Entity\Post:
         comments:
             targetEntity: Comment
             mappedBy: post
+            cascade: ["persist", "merge"]
     lifecycleCallbacks: {  }

@@ -5,6 +5,9 @@
 {% block body %}
     <div class="row">
         <div class="col s10 offset-s1">
+            {% if app.session.flashbag.has('notice') %}
+                <div class="card-panel light-green lighten-3">{{ app.session.flashbag.get('notice')[0] }}</div>
+            {% endif %}
             <div class="card">
                 <div class="card-image">
                     <img src="{{ asset(post.image.uploadDir~"/"~post.image.url) }}">
@@ -17,14 +20,22 @@
                     <h3>Commentaires</h3>
 
                     <div class="comments">
-                        {{ form_start(form) }}
+                        {% if app.user %}
+                            {{ form_start(form) }}
                             {{ form_label(form.message, 'Poster un commentaire') }}
                             {{ form_widget(form.message, {'attr': {'placeholder': 'Waouw ... !'}}) }}
                             <button class="btn" type="submit">Envoyer</button>
-                        {{ form_end(form) }}
-
-                        <br />
+                            {{ form_end(form) }}
+                        {% endif %}
+                        <br/>
                         {% for comment in post.comments %}
+                            <div class="card-panel comment">
+                              <span class="blue-text text-darken-2">
+                                <span class="text-bold">{{ comment.user.username }} :</span>
+                                {{ comment.message }}
+                              </span>
+                              <div class="comment-date">Le {{ comment.datePost|date('d/m/Y à H:i:s') }}</div>
+                            </div>
                         {% endfor %}
 
                         {% if post.comments|length == 0 %}
