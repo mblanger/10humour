@@ -21,3 +21,14 @@ comment:
     defaults: { _controller: AppBundle:Comment:comment }
     requirements:
         post: '\d+'
+
+
+api_post_list:
+    path:     /api/posts
+    defaults: { _controller: AppBundle:Api\Post:list }
+    methods:  [GET]
+
+api_post_get:
+    path:     /api/posts/{id}
+    defaults: { _controller: AppBundle:Api\Post:get }
+    methods:  [GET]

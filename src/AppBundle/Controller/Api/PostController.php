@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Api;
 
 use AppBundle\Entity\Image;
+use AppBundle\Entity\Post;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,16 +15,11 @@ use Symfony\Component\Serializer\Serializer;
 class PostController extends Controller
 {
 
-    public function listAction()
-    {
-        $em = $this->getDoctrine()->getManager();
-        $posts = $em->getRepository('AppBundle:Post')->findOneBy([], ['datePost' => 'DESC']);
+    private $ignoredAttributes;
 
-        $normalizer = new ObjectNormalizer();
-//        $normalizer->setCircularReferenceHandler(function($object){
-//            return 'lol';
-//        });
-        $normalizer->setIgnoredAttributes([
+    public function __construct()
+    {
+        $this->ignoredAttributes = [
             'post',
             'password',
             'salt',
@@ -31,7 +27,41 @@ class PostController extends Controller
             'file',
             'roles',
             'plainPassword'
-            ]);
+        ];
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function listAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $posts = $em->getRepository('AppBundle:Post')->findOneBy([], ['datePost' => 'DESC']);
+
+        $jsonContent = $this->normalize($posts);
+        $response = new JsonResponse();
+        $response->setContent($jsonContent);
+
+        return $response;
+    }
+
+    public function getAction(Post $post){
+        $em = $this->getDoctrine()->getManager();
+
+        $jsonContent = $this->normalize($post);
+        $response = new JsonResponse();
+        $response->setContent($jsonContent);
+
+        return $response;
+    }
+
+    /**
+     * @return string
+     */
+    private function normalize($content){
+
+        $normalizer = new ObjectNormalizer();
+        $normalizer->setIgnoredAttributes($this->ignoredAttributes);
 
         $normalizer->setCallbacks([
             'datePost' => function(\DateTime $date){ return $date->format('d/m/Y H:i:s'); },
@@ -41,10 +71,8 @@ class PostController extends Controller
         $encoder = new JsonEncoder();
         $serializer = new Serializer(array($normalizer), array($encoder));
 
-        $jsonContent = $serializer->serialize($posts, 'json');
-        $response = new JsonResponse();
-        $response->setContent($jsonContent);
+        $jsonContent = $serializer->serialize($content, 'json');
 
-        return $response;
+        return $jsonContent;
     }
 }
