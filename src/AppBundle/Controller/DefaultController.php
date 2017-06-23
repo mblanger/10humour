@@ -20,12 +20,11 @@ class DefaultController extends Controller
         $voteForm = $this->createForm(VoteType::class, $vote);
         $voteForm->handleRequest($request);
 
+        $form = $this->getPostForm();
+
 
         if ($this->isGranted('ROLE_USER')) {
-            $post = new Post();
-            $post->setUser($this->getUser());
 
-            $form = $this->createForm(PostType::class, $post);
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
@@ -58,10 +57,23 @@ class DefaultController extends Controller
         $posts = $this->countVotesForPosts($posts);
 
         return $this->render('AppBundle:Default:index.html.twig', array(
-            'form' => isset($form) ? $form->createView() : null,
+            'form' => is_null($this->getUser()) ? $form->createView() : null,
             'voteForm' => $voteForm->createView(),
             'posts' => $posts
         ));
+    }
+
+    public function postAction(){
+
+    }
+
+    private function getPostForm(){
+        $post = new Post();
+        $post->setUser($this->getUser());
+
+        $form = $this->createForm(PostType::class, $post);
+
+        return $form;
     }
 
     private function countVotesForPosts(array $posts){
