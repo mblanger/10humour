@@ -15,6 +15,11 @@ class DefaultController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        $vote = new Vote();
+        $vote->setUser($this->getUser());
+        $voteForm = $this->createForm(VoteType::class, $vote);
+        $voteForm->handleRequest($request);
+
 
         if ($this->isGranted('ROLE_USER')) {
             $post = new Post();
@@ -34,42 +39,41 @@ class DefaultController extends Controller
                 $em->flush();
             }
 
+            if ($voteForm->isSubmitted() && $voteForm->isValid()) {
+
+                /** @var Vote $vote */
+                $vote = $voteForm->getData();
+                $em->getRepository('AppBundle:Vote')->removeVotesByUserAndPost($this->getUser(), $vote->getPost());
+
+                $em->persist($vote);
+                $em->flush();
+
+                $this->addFlash('notice', 'Votre vote à été pris en compte');
+
+                return $this->redirectToRoute('index');
+            }
         }
 
         $posts = $em->getRepository('AppBundle:Post')->findBy([], ['id' => 'DESC']);
-
-        $vote = new Vote();
-        $vote->setUser($this->getUser());
-        $voteForm = $this->createForm(VoteType::class, $vote);
-        $voteForm->handleRequest($request);
-
-        if ($this->isGranted('ROLE_USER') && $voteForm->isSubmitted() && $voteForm->isValid()) {
-
-            /** @var Vote $vote */
-            $vote = $voteForm->getData();
-            $em->getRepository('AppBundle:Vote')->removeVotesByUserAndPost($this->getUser(), $vote->getPost());
-
-            $em->persist($vote);
-            $em->flush();
-
-            $this->addFlash('notice', 'Votre vote à été pris en compte');
-
-            return $this->redirectToRoute('index');
-        }
-
-        $nb = count($posts);
-        for ($i = 0; $i < $nb; $i++) {
-            $posts[$i]->upvotes = $em->getRepository('AppBundle:Vote')->countVotesByPost($posts[$i]);
-            $posts[$i]->downvotes = $em->getRepository('AppBundle:Vote')->countVotesByPost($posts[$i], false);
-        }
-
-
+        $posts = $this->countVotesForPosts($posts);
 
         return $this->render('AppBundle:Default:index.html.twig', array(
             'form' => isset($form) ? $form->createView() : null,
             'voteForm' => $voteForm->createView(),
             'posts' => $posts
         ));
+    }
+
+    private function countVotesForPosts(array $posts){
+        $voteRepository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Vote');
+
+        $nb = count($posts);
+        for ($i = 0; $i < $nb; $i++) {
+            $posts[$i]->upvotes = $voteRepository->countVotesByPost($posts[$i]);
+            $posts[$i]->downvotes = $voteRepository->countVotesByPost($posts[$i], false);
+        }
+
+        return $posts;
     }
 
 }
