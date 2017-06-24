@@ -28,11 +28,10 @@ logout:
 
 
 comment:
-    path:     /comment/{post}
+    path:     /post/{post}/comments
     defaults: { _controller: AppBundle:Comment:comment }
     requirements:
         post: '\d+'
-
 
 api_post_list:
     path:     /api/posts
@@ -42,4 +41,24 @@ api_post_list:
 api_post_get:
     path:     /api/posts/{id}
     defaults: { _controller: AppBundle:Api\Post:get }
+    methods:  [GET]
+
+api_comment_list:
+    path:     /api/posts/{id}/comments
+    defaults: { _controller: AppBundle:Api\Comment:listForPost }
+    methods:  [GET]
+
+api_comment_get:
+    path:     /api/posts/{post}/comments/{comment}
+    defaults: { _controller: AppBundle:Api\Comment:get }
+    methods:  [GET]
+
+api_user_list:
+    path:     /api/users
+    defaults: { _controller: AppBundle:Api\User:list }
+    methods:  [GET]
+
+api_user_get:
+    path:     /api/users/{id}
+    defaults: { _controller: AppBundle:Api\User:get }
     methods:  [GET]
