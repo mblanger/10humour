@@ -1,0 +1,7 @@
+AppBundle\Entity\Image:
+    properties:
+        file:
+            - File:
+                maxSize: 3M
+                mimeTypes: [image/gif, image/jpeg, image/png]
+                mimeTypesMessage: Vous devez envoyer une image

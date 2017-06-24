@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormInterface;
 class FormErrorsFormatter  {
 
     public function getErrorMessages(FormInterface $form) {
-        $errors = array();
+        $errors = [];
 
         foreach ($form->getErrors() as $key => $error) {
             $errors[] = $error->getMessage();

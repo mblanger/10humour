@@ -65,12 +65,15 @@ class DefaultController extends Controller
 
             $post->getImage()->upload();
 
-            $em->persist($post);
-            $em->flush();
+//            $em->persist($post);
+//            $em->flush();
 
             $this->addFlash('notice', 'Votre image est maintenant en ligne');
-            return $this->redirectToRoute('index');
+        }else{
+            $errors = $this->get('app.formerrorsformatter')->getErrorMessages($form);
+            $this->addFlash('errors', $errors);
         }
+        return $this->redirectToRoute('index');
     }
 
     private function getPostForm()

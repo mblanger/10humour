@@ -1,0 +1,4 @@
+AppBundle\Entity\Post:
+    properties:
+        image:
+            - Valid: ~
