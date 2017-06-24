@@ -25,18 +25,6 @@ class DefaultController extends Controller
 
         if ($this->isGranted('ROLE_USER')) {
 
-            $form->handleRequest($request);
-
-            if ($form->isSubmitted() && $form->isValid()) {
-                /** @var Post $post */
-                $post = $form->getData();
-                $post->setDatePost(new \DateTime('now'));
-
-                $post->getImage()->upload();
-
-                $em->persist($post);
-                $em->flush();
-            }
 
             if ($voteForm->isSubmitted() && $voteForm->isValid()) {
 
@@ -57,17 +45,36 @@ class DefaultController extends Controller
         $posts = $this->countVotesForPosts($posts);
 
         return $this->render('AppBundle:Default:index.html.twig', array(
-            'form' => is_null($this->getUser()) ? $form->createView() : null,
+            'form' => !is_null($this->getUser()) ? $form->createView() : null,
             'voteForm' => $voteForm->createView(),
             'posts' => $posts
         ));
     }
 
-    public function postAction(){
+    public function postAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $form = $this->getPostForm();
 
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var Post $post */
+            $post = $form->getData();
+            $post->setDatePost(new \DateTime('now'));
+
+            $post->getImage()->upload();
+
+            $em->persist($post);
+            $em->flush();
+
+            $this->addFlash('notice', 'Votre image est maintenant en ligne');
+            return $this->redirectToRoute('index');
+        }
     }
 
-    private function getPostForm(){
+    private function getPostForm()
+    {
         $post = new Post();
         $post->setUser($this->getUser());
 
@@ -76,7 +83,8 @@ class DefaultController extends Controller
         return $form;
     }
 
-    private function countVotesForPosts(array $posts){
+    private function countVotesForPosts(array $posts)
+    {
         $voteRepository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Vote');
 
         $nb = count($posts);

@@ -17,7 +17,7 @@
             {% if app.user %}
 
                 <h2>Proposer une image</h2>
-                {{ form_start(form) }}
+                {{ form_start(form, {'attr':{'action': path('post_post')}}) }}
                     <div class="row">
                         <div class="input-field col s12">
                             {{ form_widget(form.title) }}
