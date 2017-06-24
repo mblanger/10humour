@@ -17,8 +17,7 @@ class DefaultController extends Controller
         $em = $this->getDoctrine()->getManager();
 
 
-        $posts = $em->getRepository('AppBundle:Post')->findBy([], ['id' => 'DESC']);
-        $posts = $this->countVotesForPosts($posts);
+        $posts = $em->getRepository('AppBundle:Post')->findAllWithVotes();
 
         return $this->render('AppBundle:Default:index.html.twig', array(
             'form' => !is_null($this->getUser()) ? $this->getPostForm()->createView() : null,
@@ -95,19 +94,6 @@ class DefaultController extends Controller
         $form = $this->createForm(PostType::class, $post);
 
         return $form;
-    }
-
-    private function countVotesForPosts(array $posts)
-    {
-        $voteRepository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Vote');
-
-        $nb = count($posts);
-        for ($i = 0; $i < $nb; $i++) {
-            $posts[$i]->upvotes = $voteRepository->countVotesByPost($posts[$i]);
-            $posts[$i]->downvotes = $voteRepository->countVotesByPost($posts[$i], false);
-        }
-
-        return $posts;
     }
 
 }

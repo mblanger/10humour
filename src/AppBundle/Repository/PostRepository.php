@@ -1,6 +1,8 @@
 <?php
 
 namespace AppBundle\Repository;
+use AppBundle\Entity\Post;
+use Doctrine\ORM\Query\Expr\Join;
 
 /**
  * PostRepository
@@ -10,4 +12,23 @@ namespace AppBundle\Repository;
  */
 class PostRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findAllWithVotes(){
+        return $this->createQueryBuilder('p')
+                    ->select('p, COUNT(v.id) AS upvotes, COUNT(v2.id) AS downvotes')
+                    ->leftJoin('AppBundle:Vote', 'v', Join::WITH, 'p = v.post AND v.up = 1')
+                    ->leftJoin('AppBundle:Vote', 'v2', Join::WITH, 'p = v2.post AND v2.up = 0')
+            ->groupBy('p')
+            ->orderBy('p.datePost', 'DESC')
+            ->getQuery()->getResult();
+    }
+
+    public function findWithVotes(Post $post){
+        return $this->createQueryBuilder('p')
+            ->select('p, COUNT(v.id) AS upvotes, COUNT(v2.id) AS downvotes')
+            ->leftJoin('AppBundle:Vote', 'v', Join::WITH, 'p = v.post AND v.up = 1')
+            ->leftJoin('AppBundle:Vote', 'v2', Join::WITH, 'p = v2.post AND v2.up = 0')
+            ->where('p = :post')
+            ->setParameter('post', $post)
+            ->getQuery()->getResult();
+    }
 }

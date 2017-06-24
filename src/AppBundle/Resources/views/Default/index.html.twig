@@ -51,21 +51,21 @@
                     <div class="col s6">
                         <div class="card">
                             <div class="card-image">
-                                <img src="{{ asset(post.image.uploadDir~"/"~post.image.url) }}">
-                                <span class="card-title post-title">{{ post.title }}</span>
+                                <img src="{{ asset(post[0].image.uploadDir~"/"~post[0].image.url) }}">
+                                <span class="card-title post-title">{{ post[0].title }}</span>
                             </div>
                             <div class="card-content">
-                                <p>Posté par {{ post.user.username }} le {{ post.datePost|date('d/m/Y à H') }} heures</p>
+                                <p>Posté par {{ post[0].user.username }} le {{ post[0].datePost|date('d/m/Y à H') }} heures</p>
                             </div>
                             <div class="card-action">
-                                <a href="{{ path('comment', {'post': post.id}) }}" class="align-icon">{{ post.comments|length }} commentaire(s)</a>
+                                <a href="{{ path('comment', {'post': post[0].id}) }}" class="align-icon">{{ post[0].comments|length }} commentaire(s)</a>
                                 <div class="right">
                                     <div class="voteup">
-                                        <a href="javascript:;" data-role="voteup" data-id="{{ post.id }}" class="vote"><i class="material-icons">thumb_up</i></a>
+                                        <a href="javascript:;" data-role="voteup" data-id="{{ post[0].id }}" class="vote"><i class="material-icons">thumb_up</i></a>
                                         <span class="scoreup">{{ post.upvotes }}</span>
                                     </div>
                                     <div class="votedown">
-                                        <a href="javascript:;" data-role="votedown" data-id="{{ post.id }}" class="vote"><i class="material-icons">thumb_down</i></a>
+                                        <a href="javascript:;" data-role="votedown" data-id="{{ post[0].id }}" class="vote"><i class="material-icons">thumb_down</i></a>
                                         <span class="scoredown">{{ post.downvotes }}</span>
                                     </div>
                                 </div>

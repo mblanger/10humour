@@ -38,6 +38,11 @@ api_post_list:
     defaults: { _controller: AppBundle:Api\Post:list }
     methods:  [GET]
 
+api_post_post:
+    path:     /api/posts
+    defaults: { _controller: AppBundle:Api\Post:post }
+    methods:  [POST]
+
 api_post_get:
     path:     /api/posts/{id}
     defaults: { _controller: AppBundle:Api\Post:get }

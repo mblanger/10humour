@@ -36,7 +36,8 @@ class PostController extends Controller
     public function listAction()
     {
         $em = $this->getDoctrine()->getManager();
-        $posts = $em->getRepository('AppBundle:Post')->findBy([], ['datePost' => 'DESC']);
+
+        $posts = $em->getRepository('AppBundle:Post')->findAllWithVotes();
 
         $jsonContent = $this->normalize($posts);
         $response = new JsonResponse();
@@ -46,6 +47,8 @@ class PostController extends Controller
     }
 
     public function getAction(Post $post){
+        $em = $this->getDoctrine()->getManager();
+        $post = $em->getRepository('AppBundle:Post')->findWithVotes($post);
         $jsonContent = $this->normalize($post);
         $response = new JsonResponse();
         $response->setContent($jsonContent);
