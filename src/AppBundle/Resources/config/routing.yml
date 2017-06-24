@@ -9,6 +9,11 @@ post_post:
     defaults: { _controller: AppBundle:Default:post }
     methods:  [POST]
 
+post_vote:
+    path:     /vote
+    defaults: { _controller: AppBundle:Default:vote }
+    methods:  [POST]
+
 register:
     path:     /register
     defaults: { _controller: AppBundle:User:register }

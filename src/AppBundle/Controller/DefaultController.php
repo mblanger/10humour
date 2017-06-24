@@ -8,6 +8,7 @@ use AppBundle\Form\PostType;
 use AppBundle\Form\VoteType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class DefaultController extends Controller
 {
@@ -15,16 +16,23 @@ class DefaultController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $vote = new Vote();
-        $vote->setUser($this->getUser());
-        $voteForm = $this->createForm(VoteType::class, $vote);
-        $voteForm->handleRequest($request);
 
-        $form = $this->getPostForm();
+        $posts = $em->getRepository('AppBundle:Post')->findBy([], ['id' => 'DESC']);
+        $posts = $this->countVotesForPosts($posts);
 
+        return $this->render('AppBundle:Default:index.html.twig', array(
+            'form' => !is_null($this->getUser()) ? $this->getPostForm()->createView() : null,
+            'voteForm' => $this->getVoteForm()->createView(),
+            'posts' => $posts
+        ));
+    }
 
+    public function voteAction(Request $request){
         if ($this->isGranted('ROLE_USER')) {
+            $em = $this->getDoctrine()->getManager();
 
+            $voteForm = $this->getVoteForm();
+            $voteForm->handleRequest($request);
 
             if ($voteForm->isSubmitted() && $voteForm->isValid()) {
 
@@ -40,40 +48,43 @@ class DefaultController extends Controller
                 return $this->redirectToRoute('index');
             }
         }
+    }
 
-        $posts = $em->getRepository('AppBundle:Post')->findBy([], ['id' => 'DESC']);
-        $posts = $this->countVotesForPosts($posts);
-
-        return $this->render('AppBundle:Default:index.html.twig', array(
-            'form' => !is_null($this->getUser()) ? $form->createView() : null,
-            'voteForm' => $voteForm->createView(),
-            'posts' => $posts
-        ));
+    private function getVoteForm(){
+        $vote = new Vote();
+        $vote->setUser($this->getUser());
+        $voteForm = $this->createForm(VoteType::class, $vote);
+        return $voteForm;
     }
 
     public function postAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-        $form = $this->getPostForm();
+        if($this->isGranted('ROLE_USER')) {
 
-        $form->handleRequest($request);
+            $em = $this->getDoctrine()->getManager();
+            $form = $this->getPostForm();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var Post $post */
-            $post = $form->getData();
-            $post->setDatePost(new \DateTime('now'));
+            $form->handleRequest($request);
 
-            $post->getImage()->upload();
+            if ($form->isSubmitted() && $form->isValid()) {
+                /** @var Post $post */
+                $post = $form->getData();
+                $post->setDatePost(new \DateTime('now'));
 
-//            $em->persist($post);
-//            $em->flush();
+                $post->getImage()->upload();
 
-            $this->addFlash('notice', 'Votre image est maintenant en ligne');
+                $em->persist($post);
+                $em->flush();
+
+                $this->addFlash('notice', 'Votre image est maintenant en ligne');
+            }else{
+                $errors = $this->get('app.formerrorsformatter')->getErrorMessages($form);
+                $this->addFlash('errors', $errors);
+            }
+            return $this->redirectToRoute('index');
         }else{
-            $errors = $this->get('app.formerrorsformatter')->getErrorMessages($form);
-            $this->addFlash('errors', $errors);
+            throw new AccessDeniedException();
         }
-        return $this->redirectToRoute('index');
     }
 
     private function getPostForm()
