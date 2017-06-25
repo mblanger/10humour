@@ -30,6 +30,14 @@ logout:
 comment:
     path:     /post/{post}/comments
     defaults: { _controller: AppBundle:Comment:comment }
+    methods:  [GET]
+    requirements:
+        post: '\d+'
+
+post_comment:
+    path:     /post/{post}/comments
+    defaults: { _controller: AppBundle:Comment:postComment }
+    methods:  [POST]
     requirements:
         post: '\d+'
 

@@ -12,16 +12,21 @@ class CommentController extends Controller
 {
     public function commentAction(Request $request, Post $post)
     {
+        return $this->render('AppBundle:Comment:comment.html.twig', array(
+            'post' => $post,
+            'form' => $this->getForm($post)->createView()
+        ));
+    }
+
+    public function postCommentAction(Request $request, Post $post)
+    {
         $em = $this->getDoctrine()->getManager();
+        $form = $this->getForm($post);
 
-        $comment = new Comment();
-        $comment->setUser($this->getUser());
-        $comment->setPost($post);
-
-        $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $comment = $form->getData();
             $comment->setDatePost(new \DateTime('now'));
 
             $post->addComment($comment);
@@ -33,11 +38,15 @@ class CommentController extends Controller
 
             return $this->redirectToRoute('comment', ['post' => $post->getId()]);
         }
+    }
 
-        return $this->render('AppBundle:Comment:comment.html.twig', array(
-            'post' => $post,
-            'form' => $form->createView()
-        ));
+    private function getForm(Post $post)
+    {
+        $comment = new Comment();
+        $comment->setUser($this->getUser());
+        $comment->setPost($post);
+
+        return $this->createForm(CommentType::class, $comment);
     }
 
 }
